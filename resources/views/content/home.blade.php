@@ -881,7 +881,7 @@
             </div>
             <!-- End of Create Chat -->
             <div class="main">
-                <div class="tab-content" id="nav-tabContent">
+                <div class="tab-content" id="nav-tabContent" style="height: 100%">
                     <!-- Start of Babble -->
                     <livewire:chat-box />
                     <!-- End of Babble -->

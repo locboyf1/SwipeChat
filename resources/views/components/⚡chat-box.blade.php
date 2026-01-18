@@ -118,10 +118,11 @@ new class extends Component {
 };
 ?>
 
-<div>
+<div style="height: 100%">
     @if ($receiver)
-        <div class="babble tab-pane fade active show" id="list-chat" role="tabpanel" aria-labelledby="list-chat-list">
-            <div class="chat" id="chat1">
+        <div class="babble tab-pane fade active show" id="list-chat" role="tabpanel" aria-labelledby="list-chat-list"
+            style="height: 100%">
+            <div class="chat" id="chat1" style="display: flex; flex-direction: column; height: 100%">
                 <div class="top">
                     <div class="container">
                         <div class="col-md-12">
@@ -163,7 +164,7 @@ new class extends Component {
                     </div>
                 </div>
                 <div class="content" id="chat-content" wire:key="chat-content-{{ $receiver->id }}"
-                    x-data="{
+                    style="flex: 1; overflow-y: auto; height: auto !important" x-data="{
                         isLoading: false,
                         init() {
                             this.scrollToBottom();
@@ -193,8 +194,8 @@ new class extends Component {
                                 });
                             }
                         }
-                    }" x-on:scroll="handleScroll" x-init="init()"
-                    x-on:scroll-to-bottom.window="scrollToBottom()">
+                    }"
+                    x-on:scroll="handleScroll" x-init="init()" x-on:scroll-to-bottom.window="scrollToBottom()">
 
                     <div class="container">
                         <div class="col-md-12">

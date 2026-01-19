@@ -47,6 +47,10 @@ class User extends Authenticatable
         ];
     }
 
+    protected $appends = [
+        'avatar_path',
+    ];
+
     public function sentMessages()
     {
         return $this->hasMany(Message::class, 'sender_id');
@@ -68,16 +72,29 @@ class User extends Authenticatable
 
     public function sendAndAcceptedFriendships()
     {
-        return $this->belongsToMany(User::class, 'friendships', 'sender_id', 'receiver_id')->wherePivot('status', 'accepted');
+        return $this->belongsToMany(User::class, 'friendships', 'sender_id', 'receiver_id')->wherePivot('status', 'accepted')
+            ->withPivot(['last_message', 'sender_id_last_message', 'number_of_unread_messages'])->using(Friendship::class);
     }
 
     public function receivedAndAcceptedFriendships()
     {
-        return $this->belongsToMany(User::class, 'friendships', 'receiver_id', 'sender_id')->wherePivot('status', 'accepted');
+        return $this->belongsToMany(User::class, 'friendships', 'receiver_id', 'sender_id')->wherePivot('status', 'accepted')
+            ->withPivot(['last_message', 'sender_id_last_message', 'number_of_unread_messages'])->using(Friendship::class);
     }
 
     public function getFriendsAttribute()
     {
-        return $this->sendAndAcceptedFriendships()->get()->merge($this->receivedAndAcceptedFriendships()->get());
+        $sent = $this->sendAndAcceptedFriendships()->get();
+        $received = $this->receivedAndAcceptedFriendships()->get();
+
+        $friends = $sent->merge($received);
+
+        return $friends->map(function ($friend) {
+            $friend->last_message = $friend->pivot->last_message;
+            $friend->sender_id_last_message = $friend->pivot->sender_id_last_message;
+            $friend->number_of_unread_messages = $friend->pivot->number_of_unread_messages;
+
+            return $friend;
+        });
     }
 }

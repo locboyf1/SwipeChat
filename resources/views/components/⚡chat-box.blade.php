@@ -78,6 +78,10 @@ new class extends Component {
         } else {
             $this->hasMore = true;
         }
+
+        $messages->last()->Update([
+            'read_at' => now(),
+        ]);
     }
 
     public function sendMessage()
@@ -99,13 +103,13 @@ new class extends Component {
         SendMessage::dispatch($message);
 
         $this->dispatch('scroll-to-bottom');
+        $this->dispatch('updateFriendship', $message->id);
     }
 
     #[On('echo-private:chat.{authId},SendMessage')]
     public function receiveMessage($event)
     {
         $data = $event['message'];
-        Log::info($data);
         if ($this->receiver) {
             if ($this->receiver && $this->receiver->id == $data['sender_id']) {
                 $message = Message::find($data['id']);
@@ -114,6 +118,8 @@ new class extends Component {
                 $this->dispatch('scroll-to-bottom');
             }
         }
+
+        $this->dispatch('updateFriendship', $data['id']);
     }
 };
 ?>

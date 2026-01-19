@@ -16,6 +16,9 @@ return new class extends Migration
             $table->foreignId('sender_id')->constrained('users')->cascadeOnDelete();
             $table->foreignId('receiver_id')->constrained('users')->cascadeOnDelete();
             $table->enum('status', ['pending', 'accepted', 'blocked'])->default('pending')->nullable();
+            $table->text('last_message')->nullable();
+            $table->integer('sender_id_last_message')->default(0);
+            $table->integer('number_of_unread_messages')->default(0);
             $table->timestamps();
         });
     }
